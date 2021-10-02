@@ -25,8 +25,6 @@ class LandingPage extends Component {
 
             <div>
 
-                
-
                 <div className="landing-page-wallpaper">
 
                     <header>
