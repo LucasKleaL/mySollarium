@@ -17,16 +17,20 @@ class SunlightMonitoring extends Component {
             initialDate: "",
             endDate: "",
             solarDataType: "",
+            dataTypeTitle: "",
+            daysCount: "",
+            mean: "",
         }
 
         this.submitData = this.submitData.bind(this);
+        this.attState = this.attState.bind(this);
+        this.proccessData = this.proccessData.bind(this);
 
     }
 
     attState(event) {
 
         let state = this.state;
-        console.log(event.target.name)
 
         if (event.target.name === "latitude") {
             state.latitude = event.target.value;
@@ -36,18 +40,35 @@ class SunlightMonitoring extends Component {
         }  
         else if (event.target.name === "initialDate") {
             let date = event.target.value;
-            date = date.replace('-', '');
-            date = date.replace('-', '');
+            let split = date.split('-');
+            date = split[0];
             state.initialDate = date;
         }
         else if (event.target.name === "endDate") {
             let date = event.target.value;
-            date = date.replace('-', '');
-            date = date.replace('-', '');
+            let split = date.split('-');
+            date = split[0];
             state.endDate = date;
         }
         else if (event.target.name === "solarDataType") {
-            state.solarDataType = event.target.value;
+
+            if (event.target.value === "Surface UV Irradiance") {
+                state.solarDataType = "ALLSKY_SFC_UV_INDEX";
+                state.dataTypeTitle = "Surface UV Irradiance";
+            }
+            else if (event.target.value === "Surface UVA Irradiance") {
+                state.solarDataType = "ALLSKY_SFC_UVA";
+                state.dataTypeTitle = "Surface UVA Irradiance";
+            }
+            else if (event.target.value === "Surface UVB Irradiance") {
+                state.solarDataType = "ALLSKY_SFC_UVB";
+                state.dataTypeTitle = "Surface UVB Irradiance";
+            }
+            else if (event.target.value === "Clear Sky Surface") {
+                state.solarDataType = "CLRSKY_SFC_SW_DWN";
+                state.dataTypeTitle = "Clear Sky Surface";
+            }
+
         }
 
         this.setState(state);
@@ -58,32 +79,63 @@ class SunlightMonitoring extends Component {
     async submitData(e) {
 
         let state = this.state;
-
-        const url = "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=ALLSKY_SFC_UV_INDEX&community=RE&longitude="+`${state.longitude}`+"&latitude="+`${state.latitude}`+"&start="+`${state.initialDate}`+"&end="+`${state.endDate}`+"&format=JSON";
+        const url = "https://power.larc.nasa.gov/api/temporal/daily/point?parameters="+`${state.solarDataType}`+"&community=RE&longitude="+`${state.longitude}`+"&latitude="+`${state.latitude}`+"&start="+`${state.initialDate}`+"&end="+`${state.endDate}`+"&format=JSON";
         
-        e.preventDefault()
+        e.preventDefault();
 
-        console.log(url)
+        console.log(url);
 
         try {
             const response = await fetch (url);
             const data = await response.json();
-            console.log(data);
+            this.proccessData(data);
+            e.preventDefault() 
         }
         catch (error) {
             console.log(error)
+            e.preventDefault()
         }
 
     }
 
-    todayDate() {
+    proccessData(data) {
+
+        let state = this.state
+        let dataContent = data.properties.parameter.CLRSKY_SFC_SW_DWN;
+        let sum = 0;
+        let counter = 0;
+        //let dataContentLength = Object.keys(dataContent).length
+
+        for (var i in dataContent) {
+            sum += dataContent[i];
+            counter++;
+        }
+
+        let mean = sum / counter;
+
+        console.log("sum: " + sum);
+        console.log("counter: " + counter);
+        console.log("mean: " + mean)
+        state.mean = mean;
+        state.daysCount = counter;
+        this.setState(state);
+
+    }
+
+    todayDate(id) {
 
         let today = new Date();
-        let dd = String(today.getDate()).padStart(2, '0');
-        let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        //let dd = String(today.getDate()).padStart(2, '0');
+        //let mm = String(today.getMonth() + 1).padStart(2, '0');
         let yyyy = today.getFullYear();
 
-        today = + + yyyy + '-' + mm + '-' + dd;
+        if (id === "i") {
+            today = (yyyy - 2) + '-' + 12;
+        }
+        else if (id === "e") {
+            today = (yyyy - 1) + '-' + 12;
+        }
+
         return today;
 
     }
@@ -108,55 +160,85 @@ class SunlightMonitoring extends Component {
 
                 <div className="div-container">
 
-                    <div>
+                    <div id="sectionContainer" style={{marginLeft: "1rem"}}>
 
-                        <form onSubmit={this.submitData}>
+                        <div>
 
-                            <h1 className="h1-title">Here you can access the solar incidence on your location.</h1>
+                            <form onSubmit={this.submitData}>
 
-                            <div style={{ width: "100%", height: "4.3rem" }}>
-                                <h2 className="h2-input-title">Latitude</h2>
-                                <input type="text" name="latitude" size="10" className="text-input" style={{ float: "left" }} placeholder="38.502" onChange={(e) => this.attState(e)}></input>
-                            </div>
+                                <h1 className="h1-title">Here you can access the solar incidence on your location.</h1>
 
-                            <div style={{ width: "100%", height: "4.3rem" }}>
-                                <h2 className="h2-input-title">Longitude</h2>
-                                <input type="text" name="longitude" className="text-input" style={{ float: "left" }} placeholder="-04.200" onChange={(e) => this.attState(e)}></input>
-                            </div>
-
-                            <p className="p-link">How I get my location latitude/longitude?</p>
-
-                            <div style={{ display: "flex" }}>
-
-                                <div>
-                                    <h2 className="h2-input-title">Initial Date</h2>
-                                    <input type="date" name="initialDate" max={this.todayDate()} style={{ borderRadius: "5px", border: "0", paddingLeft: "0.5rem" }} onChange={(e) => this.attState(e)}></input>
+                                <div style={{ width: "100%", height: "4.3rem" }}>
+                                    <h2 className="h2-input-title">Latitude</h2>
+                                    <input type="text" name="latitude" size="10" className="text-input" style={{ float: "left" }} placeholder="38.502" onChange={(e) => this.attState(e)}></input>
                                 </div>
 
-                                <div style={{ marginLeft: "2rem" }}>
-                                    <h2 className="h2-input-title">End Date</h2>
-                                    <input type="date" name="endDate" max={this.todayDate()} style={{ borderRadius: "5px", border: "0", paddingLeft: "0.5rem" }} onChange={(e) => this.attState(e)}></input>
+                                <div style={{ width: "100%", height: "4.3rem" }}>
+                                    <h2 className="h2-input-title">Longitude</h2>
+                                    <input type="text" name="longitude" className="text-input" style={{ float: "left" }} placeholder="-04.200" onChange={(e) => this.attState(e)}></input>
+                                </div>
+
+                                <p className="p-link">How I get my location latitude/longitude?</p>
+
+                                <div style={{ display: "flex" }}>
+
+                                    <div>
+                                        <h2 className="h2-input-title">Initial Date</h2>
+                                        <input type="month" name="initialDate" min="1981-01" max={this.todayDate("i")} style={{ borderRadius: "5px", border: "0", paddingLeft: "0.5rem" }} onChange={(e) => this.attState(e)}></input>
+                                    </div>
+
+                                    <div style={{ marginLeft: "2rem" }}>
+                                        <h2 className="h2-input-title">End Date</h2>
+                                        <input type="month" name="endDate" min="1981-01" max={this.todayDate("e")} style={{ borderRadius: "5px", border: "0", paddingLeft: "0.5rem" }} onChange={(e) => this.attState(e)}></input>
+                                    </div>
+
+                                </div>
+
+                                <div style={{ width: "100%", height: "4.3rem" }}>
+
+                                    <h2 className="h2-input-title">Solar Data Type</h2>
+
+                                    <select className="select-input" name="solarDataType" onChange={(e) => this.attState(e)}>
+                                        <option></option>
+                                        <option>Clear Sky Surface</option>
+                                        <option>Surface UV Irradiance</option>
+                                        <option>Surface UVA Irradiance</option>
+                                        <option>Surface UVB Irradiance</option>
+                                    </select>
+
+                                </div>
+
+                                <div style={{ paddingTop: "1rem" }}>
+                                    <Button variant="contained" style={{ float: "left", color: "var(--dark-blue)" }} type="submit">Submit</Button>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <div style={{marginTop: "5rem", display: "block"}}>
+
+                            <div style={{float: "left"}}>
+
+                                <h2 className="h2-result-title">{this.state.dataTypeTitle}</h2>
+                                <div style={{display: "flex", width: "100%"}}>
+                                    <p className="p-result-attribute">Initial Date:</p>
+                                    <p className="p-result-value">{this.state.initialDate}</p>
+                                </div>
+
+                                <div style={{display: "flex", width: "100%"}}>
+                                    <p className="p-result-attribute">End Date:</p>
+                                    <p className="p-result-value">{this.state.endDate}</p>
+                                </div>
+
+                                <div style={{display: "flex", width: "100%"}}>
+                                    <p className="p-result-attribute">Mean of {this.state.daysCount} days:</p>
+                                    <p className="p-result-value">{this.state.mean}</p>
                                 </div>
 
                             </div>
-
-                            <div style={{ width: "100%", height: "4.3rem" }}>
-
-                                <h2 className="h2-input-title">Solar Data Type</h2>
-
-                                <select className="select-input" name="solarDataType" onChange={(e) => this.attState(e)}>
-                                    <option>Surface UV Irradiance</option>
-                                    <option>Surface UVA Irradiance</option>
-                                    <option>Surface UVB Irradiance</option>
-                                </select>
-
-                            </div>
-
-                            <div style={{ paddingTop: "1rem" }}>
-                                <Button variant="contained" style={{ float: "left", color: "var(--dark-blue)" }} type="submit">Submit</Button>
-                            </div>
-
-                        </form>
+                            
+                        </div>
 
                     </div>
 

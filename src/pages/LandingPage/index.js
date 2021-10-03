@@ -75,8 +75,12 @@ class LandingPage extends Component {
 
                 <div className="div-section-2">
 
-                    <div>
-                        
+                    <div className="div-power-production">
+
+                        <div>
+                            <h1 className="body-title">Solar Power Production Calculator</h1>
+                        </div>
+
                     </div>
 
                 </div>
