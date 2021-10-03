@@ -10,13 +10,17 @@
     --white:#FFFFFF;
     --white-background: #F8F8F8;
     --gray-border: #CDCDCD;
+    --gray-background: #B2BDB7;
     --gray-tag: #C4C4C4;
     --gray-line: #8C8C8C;
     --gray-dark-text: #3F3F3F;
     --black: #000000;
     --black-background: #121212;
-    --green-up: #30B72D;
+    --light-green: #35FF31;
+    --medium-green: #6AAD6D;
+    --dark-green: #0E4727;
     --dark-blue: #011223;
+    --background-blue: #011F3B;
     --sky-blue: #007692;
     --light-blue: #00D8FF;
     --red-fire: #FF0000;
@@ -24,14 +28,30 @@
 
 body {
     background-color: var(--dark-blue);
-
-    background-color: linear-gradient(180deg, rgba(1,18,35,1) 0%, rgba(9,9,121,1) 35%, rgba(0,118,146,1) 100%);;
+    background-color: linear-gradient(180deg, rgba(1,18,35,1) 0%, rgba(9,9,121,1) 35%, rgba(0,118,146,1) 100%);
+    height: 100vh;
 }
 
 header {
     width: 100% !important;
     height: 3.5rem;
     display: flex;
+}
+
+.header-button {
+    margin-top: 0.5rem;
+    height: 110%;
+    
+}
+
+.rounded-header-button {
+    height: 100%;
+}
+
+.div-header-icons {
+    float: right;
+    display: flex;
+    width: 70%;
 }
 
 .div-container {
@@ -42,7 +62,7 @@ header {
     flex-wrap: wrap;
     justify-content: center;
     width: 100% !important; 
-    height: 100% !important;
+    
 }
 
 @media(max-width: 1080px) {

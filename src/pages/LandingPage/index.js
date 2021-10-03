@@ -35,7 +35,7 @@ class LandingPage extends Component {
                         <div className="div-header-icons">
 
                             <Box m={1} >
-                                <Link to="/SunlightMonitoring" style={{ textDecoration: "none" }}> 
+                                <Link to="/HistoricData" style={{ textDecoration: "none" }}> 
                                     <Button className="header-button" title="Historic data">
                                         <BarChart fontSize="medium" style={{ color: "white" }}/>
                                         <h1 className="header-button-text">Historic data</h1>
@@ -69,6 +69,14 @@ class LandingPage extends Component {
                                 See the NASA's POWER data
                             </Button>
                         </Link>
+                    </div>
+
+                </div>
+
+                <div className="div-section-2">
+
+                    <div>
+                        
                     </div>
 
                 </div>
