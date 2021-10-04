@@ -78,7 +78,41 @@ class LandingPage extends Component {
                     <div className="div-power-production">
 
                         <div>
+
                             <h1 className="body-title">Solar Power Production Calculator</h1>
+
+                            <div style={{display: "flex", paddingTop: "1rem"}}>
+
+                                <div>
+                                    <h2 className="h2-calculator-attribute">Solar Board Power (W)</h2>
+                                    <div style={{display: "flex"}}>
+                                        <input className="calculator-input"></input>
+                                        <h2 className="h2-calculator-attribute" style={{paddingLeft: "1rem", paddingTop: "0.2rem"}}>X</h2>
+                                    </div>
+                                </div>
+
+                                <div style={{paddingLeft: "1rem"}}>
+                                    <h2 className="h2-calculator-attribute">Time of solar Exposure (h/day)</h2>
+                                    <div style={{display: "flex"}}>
+                                        <input className="calculator-input"></input>
+                                        <h2 className="h2-calculator-attribute" style={{paddingLeft: "1rem", paddingTop: "0.2rem"}}>X</h2>
+                                    </div>
+                                </div>
+
+                                <div style={{paddingLeft: "1rem"}}>
+                                    <h2 className="h2-calculator-attribute">Efficiency</h2>
+                                    <div style={{display: "flex"}}>
+                                        <input value="80" className="calculator-input" style={{width: "2rem"}}></input>
+                                        <h2 className="h2-calculator-attribute" style={{paddingLeft: "0.5rem", paddingTop: "0.2rem"}}>%</h2>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div style={{marginTop: "2rem"}}>
+                                <Button variant="outlined" style={{color: "white", borderColor: "white"}}>Calculate</Button>
+                            </div>
+                            
                         </div>
 
                     </div>

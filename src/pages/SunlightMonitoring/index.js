@@ -20,6 +20,8 @@ class SunlightMonitoring extends Component {
             dataTypeTitle: "",
             daysCount: "",
             mean: "",
+            highest: "",
+            smallest: "",
         }
 
         this.submitData = this.submitData.bind(this);
@@ -101,23 +103,56 @@ class SunlightMonitoring extends Component {
     proccessData(data) {
 
         let state = this.state
-        let dataContent = data.properties.parameter.CLRSKY_SFC_SW_DWN;
+        let dataContent;
+
+        if (state.solarDataType === "ALLSKY_SFC_UV_INDEX") {
+            dataContent = data.properties.parameter.ALLSKY_SFC_UV_INDEX;
+        }
+        else if (state.solarDataType === "ALLSKY_SFC_UVA") {
+            dataContent = data.properties.parameter.ALLSKY_SFC_UVA;
+        }
+        else if (state.solarDataType === "ALLSKY_SFC_UVB") {
+            dataContent = data.properties.parameter.ALLSKY_SFC_UVB;
+        }
+        else if (state.solarDataType === "CLRSKY_SFC_SW_DWN") {
+            dataContent = data.properties.parameter.CLRSKY_SFC_SW_DWN;
+        }
+
+        let valuesArray = [];
         let sum = 0;
         let counter = 0;
+        let highest = 0;
+        let smallest = 100000;
+
         //let dataContentLength = Object.keys(dataContent).length
 
         for (var i in dataContent) {
             sum += dataContent[i];
             counter++;
+            valuesArray.push(dataContent[i]);
         }
 
-        let mean = sum / counter;
+        for (var y = 0; y < valuesArray.length; y++) {
+
+            if (valuesArray[y] > highest) {
+                highest = valuesArray[y];
+            }
+            if (valuesArray[y] < smallest) {
+                smallest = valuesArray[y];
+            }
+
+        }
+
+        state.highest = highest;
+        state.smallest = smallest;
+
+        let mean = (sum / counter) / 2;
 
         console.log("sum: " + sum);
         console.log("counter: " + counter);
         console.log("mean: " + mean)
         state.mean = mean;
-        state.daysCount = counter;
+        state.daysCount = Math.round(counter / 2 - 0.1);
         this.setState(state);
 
     }
@@ -232,8 +267,18 @@ class SunlightMonitoring extends Component {
                                 </div>
 
                                 <div style={{display: "flex", width: "100%"}}>
-                                    <p className="p-result-attribute">Mean of {this.state.daysCount} days:</p>
+                                    <p className="p-result-attribute">Average of {this.state.daysCount} days:</p>
                                     <p className="p-result-value">{this.state.mean}</p>
+                                </div>
+
+                                <div style={{display: "flex", width: "100%"}}>
+                                    <p className="p-result-attribute">Highest of {this.state.daysCount} days:</p>
+                                    <p className="p-result-value">{this.state.highest}</p>
+                                </div>
+
+                                <div style={{display: "flex", width: "100%"}}>
+                                    <p className="p-result-attribute">Smallest of {this.state.daysCount} days:</p>
+                                    <p className="p-result-value">{this.state.smallest}</p>
                                 </div>
 
                             </div>
