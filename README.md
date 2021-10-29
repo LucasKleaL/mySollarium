@@ -1,11 +1,7 @@
 
-<h1 align="center">
-  mySollarium
-</h1>
+# mySollarium ☀️
 
-<h3 align="center">
-  A solar energy data provider, consuming the NASA's API POWER.
-</h3>
+### A solar energy data provider, consuming the NASA's API POWER.
 
 #### You can access the application on: https://mysollarium.vercel.app/
 
