@@ -1,7 +1,7 @@
 
 # mySollarium ☀️
 
-### A solar energy data provider, consuming the NASA's API POWER.
+### A solar energy data provider, consuming the NASA's POWER API.
 
 #### You can access the application on: https://mysollarium.vercel.app/
 
